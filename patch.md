@@ -61,6 +61,7 @@ root@egress-attacker:~/egressbuster# ./egress_listener.py 192.168.1.68 eth0
 ```
 
 ```
+root@egress-target:~/egressbuster# nc -nz 192.168.1.68 25-30
 root@egress-target:~/egressbuster# ./egressbuster.py 192.168.1.68 25-30
 [i] Sending packets to egress listener (192.168.1.68)...
 [i] Starting at: TCP 25, ending at: TCP 30
