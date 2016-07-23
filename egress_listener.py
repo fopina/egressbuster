@@ -14,7 +14,6 @@ import time
 
 # define empty variable
 shell = ""
-port = 1090
 running = True
 
 # assign arg params
@@ -74,15 +73,16 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer): pa
 if __name__ == "__main__":
 
     try:
+        # threaded server to handle multiple TCP connections
+        socketserver = ThreadedTCPServer(('', 0), ThreadedTCPRequestHandler)
+        socketserver_thread = threading.Thread(target=socketserver.serve_forever)
+        socketserver_thread.setDaemon(True)
+        socketserver_thread.start()
+        port = socketserver.server_address[1]
         print "[*] Inserting iptables rule to redirect **all TCP ports** to port TCP %s" % port
         subprocess.Popen(
             " iptables -t nat -A PREROUTING -i %s -p tcp  --dport 1:65535 -j DNAT --to-destination %s:%s" % (
             eth, ipaddr, port), shell=True).wait()
-        # threaded server to handle multiple TCP connections
-        socketserver = ThreadedTCPServer(('', port), ThreadedTCPRequestHandler)
-        socketserver_thread = threading.Thread(target=socketserver.serve_forever)
-        socketserver_thread.setDaemon(True)
-        socketserver_thread.start()
         print "[*] Listening on all TCP ports now... Press control-c when finished."
 
         while running:
