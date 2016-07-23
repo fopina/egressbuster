@@ -91,9 +91,11 @@ if __name__ == "__main__":
         socketserver_thread.start()
         port = socketserver.server_address[1]
         print("[*] Inserting iptables rule to redirect **all TCP ports** to port TCP %s" % port)
-        subprocess.Popen(
-            " iptables -t nat -A PREROUTING -i %s -p tcp  --dport 1:65535 -j DNAT --to-destination %s:%s" % (
+        ret = subprocess.Popen(
+            "iptables -t nat -A PREROUTING -i %s -p tcp  --dport 1:65535 -j DNAT --to-destination %s:%s" % (
             eth, ipaddr, port), shell=True).wait()
+        if ret != 0:
+            raise Exception('failed to set iptables rule (code %d), aborting' % ret)
         print("[*] Listening on all TCP ports now... Press control-c when finished.")
 
         while running:
@@ -105,7 +107,7 @@ if __name__ == "__main__":
         print("[!] An issue occurred. Error: " + str(e))
     finally:
         print("\n[*] Exiting, flushing iptables to remove entries.")
-        subprocess.Popen("iptables -t nat -F", shell=True).wait()
+        subprocess.Popen("iptables -t nat -F PREROUTING", shell=True).wait()
 
     print("[*] Done")
     sys.exit()
