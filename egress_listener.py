@@ -11,6 +11,10 @@ import subprocess
 import sys
 import threading
 import time
+import socket
+import struct
+
+SO_ORIGINAL_DST = 80
 
 # define empty variable
 shell = ""
@@ -50,6 +54,10 @@ except:
 class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
     # handle the packet
     def handle(self):
+        print repr(self.request.getsockopt(socket.SOL_IP, SO_ORIGINAL_DST, 16))
+        sockaddr_in = self.request.getsockopt(socket.SOL_IP, SO_ORIGINAL_DST, 16)
+        port = struct.unpack('!HHBBBB', sockaddr_in[:8])[1]
+        print('Original port was: %d' % (port))
         self.data = self.request.recv(1024).strip()
         print "[*] Connected from %s on port: TCP %s" % (self.client_address[0], self.data)
         if shell == "shell":
